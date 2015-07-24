@@ -55,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
             public void handle(String data, WebViewJavascriptBridge.WVJBResponseCallback jsCallback) {
                 Log.d(TAG, "testObjcCallback got:" + data);
                 if (null != jsCallback) {
-                    jsCallback.callback("testObjcCallback answer");
+                    jsCallback.callback("testObjcCallback:" + data);
                 }
-                bridge.callHandler("showAlert", "42");
+                //bridge.callHandler("showAlert", "42");
             }
         });
     }

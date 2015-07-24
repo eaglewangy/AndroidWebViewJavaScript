@@ -30,9 +30,8 @@
 			message['callbackId'] = callbackId;
 		}
 		console.log('sending:' + JSON.stringify(message));
-		_WebViewJavascriptBridge._handleMessageFromJs(message.data||null,message.responseId||null,
-		    message.responseData||null,message.callbackId||null,message.handlerName||null);
-
+		_WebViewJavascriptBridge._handleMessageFromJs(JSON.stringify(message.data) || null, message.responseId || null,
+		    message.responseData || null, message.callbackId || null,message.handlerName || null);
 	}
 
 	function _dispatchMessageFromJava(messageJSON) {
