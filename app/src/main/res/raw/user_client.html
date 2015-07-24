@@ -1,31 +1,51 @@
 <!doctype html>
 <html>
 <head>
-<script type='text/javascript'>
-    function test(){
-        alert('test');
-    }
+<head>
+    <style type='text/css'>
+        html { font-family:Helvetica; color:#222; }
+        h1 { color:steelblue; font-size:24px; margin-top:24px; }
+        button { margin:0 3px 10px; font-size:12px; }
+        .logLine { border-bottom:1px solid #ccc; padding:4px 2px; font-family:courier; font-size:11px; }
+    </style>
+</head>
 
+<script type='text/javascript'>
     console.log('user_client.js called!');
     document.addEventListener('WebViewJavascriptBridgeReady', function(event) {
+        var uniqueId = 1;
+		function log(message, data) {
+			var log = document.getElementById('log');
+			var el = document.createElement('div');
+			el.className = 'logLine';
+			el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data);
+			if (log.children.length) { log.insertBefore(el, log.children[0]); }
+			else { log.appendChild(el); }
+		}
+
+
         var bridge= event.bridge;
         bridge.init(function(message, responseCallback) {
              if (responseCallback) {
                 responseCallback('Right back atcha');
              }
-        }) ;
+        });
+        bridge.send('Hello from the javascript');
+        /*
         bridge.send('Hello from the javascript');
         bridge.send('Please respond to this', function(responseData) {
-            console.log('Javascript got its response '+ responseData);
+            console.log('Javascript got its response ' + responseData);
         });
         bridge.registerHandler("showAlert", function(data) { console.log("alert:"+data); });
         bridge.callHandler('handler1","gift for handler1',function(responseData){
             console.log('got handler1 response:'+responseData);
         });
+        */
     }, false);
 </script>
 </head>
 <body>
+<div id='buttons'></div> <div id='log'></div>
 <input type='button' value='Test' onClick='test()'>
 </body>
 </html>

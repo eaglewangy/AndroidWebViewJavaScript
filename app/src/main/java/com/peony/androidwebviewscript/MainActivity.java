@@ -44,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
                     Log.d("test", "Got response! " + responseData);
                 }
             });
-            bridge.send("Hi");
+            //bridge.send("Hi");
         }
     }
 
