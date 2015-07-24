@@ -18,6 +18,7 @@ import java.util.Scanner;
  * implements Serializable in case of javascript interface will be removed in obfuscated code.
  */
 public class WebViewJavascriptBridge implements Serializable {
+    private final static String TAG = WebViewJavascriptBridge.class.getSimpleName();
 
     WebView mWebView;
     Activity mContext;
@@ -62,7 +63,7 @@ public class WebViewJavascriptBridge implements Serializable {
     private class MyWebViewClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView webView, String url) {
-            Log.d("test", "onPageFinished");
+            Log.d(TAG, "onPageFinished");
             loadWebViewJavascriptBridgeJs(webView);
         }
     }
@@ -70,7 +71,7 @@ public class WebViewJavascriptBridge implements Serializable {
     private class MyWebChromeClient extends WebChromeClient {
         @Override
         public boolean onConsoleMessage(ConsoleMessage cm) {
-            Log.d("test", cm.message() + " line:" + cm.lineNumber());
+            Log.d(TAG, cm.message() + " line:" + cm.lineNumber());
             return true;
         }
 
@@ -135,7 +136,7 @@ public class WebViewJavascriptBridge implements Serializable {
             if (null != handlerName) {
                 handler = _messageHandlers.get(handlerName);
                 if (null == handler) {
-                    Log.e("test", "WVJB Warning: No handler for " + handlerName);
+                    Log.e(TAG, "WVJB Warning: No handler for " + handlerName);
                     return;
                 }
             } else {
@@ -150,7 +151,7 @@ public class WebViewJavascriptBridge implements Serializable {
                     }
                 });
             } catch (Exception exception) {
-                Log.e("test", "WebViewJavascriptBridge: WARNING: java handler threw. " + exception.getMessage());
+                Log.e(TAG, "WebViewJavascriptBridge: WARNING: java handler threw. " + exception.getMessage());
             }
         }
     }
@@ -179,7 +180,6 @@ public class WebViewJavascriptBridge implements Serializable {
 
     private void _dispatchMessage(Map<String, String> message) {
         String messageJSON = new JSONObject(message).toString();
-        Log.d("test", "sending:" + messageJSON);
         final String javascriptCommand =
                 String.format("javascript:WebViewJavascriptBridge._handleMessageFromJava('%s');", doubleEscapeString(messageJSON));
         mContext.runOnUiThread(new Runnable() {

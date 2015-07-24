@@ -1,13 +1,14 @@
 package com.peony.androidwebviewscript;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
 
 import java.io.InputStream;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
+    private final static String TAG = "Java";
 
     private WebView webView;
     private WebViewJavascriptBridge bridge;
@@ -34,14 +35,14 @@ public class MainActivity extends ActionBarActivity {
     class UserServerHandler implements WebViewJavascriptBridge.WVJBHandler {
         @Override
         public void handle(String data, WebViewJavascriptBridge.WVJBResponseCallback jsCallback) {
-            Log.d("test", "Received message from javascript: " + data);
+            Log.d(TAG, "Received message from javascript: " + data);
             if (null != jsCallback) {
                 jsCallback.callback("Java said:Right back atcha");
             }
             bridge.send("I expect a response!", new WebViewJavascriptBridge.WVJBResponseCallback() {
                 @Override
                 public void callback(String responseData) {
-                    Log.d("test", "Got response! " + responseData);
+                    Log.d(TAG, "Got response! " + responseData);
                 }
             });
             //bridge.send("Hi");
@@ -49,12 +50,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void registerHandle() {
-        bridge.registerHandler("handler1", new WebViewJavascriptBridge.WVJBHandler() {
+        bridge.registerHandler("testObjcCallback", new WebViewJavascriptBridge.WVJBHandler() {
             @Override
             public void handle(String data, WebViewJavascriptBridge.WVJBResponseCallback jsCallback) {
-                Log.d("test", "handler1 got:" + data);
+                Log.d(TAG, "testObjcCallback got:" + data);
                 if (null != jsCallback) {
-                    jsCallback.callback("handler1 answer");
+                    jsCallback.callback("testObjcCallback answer");
                 }
                 bridge.callHandler("showAlert", "42");
             }
