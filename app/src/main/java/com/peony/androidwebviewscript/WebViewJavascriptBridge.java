@@ -20,32 +20,32 @@ import java.util.Scanner;
 public class WebViewJavascriptBridge implements Serializable {
     private final static String TAG = WebViewJavascriptBridge.class.getSimpleName();
 
-    WebView mWebView;
-    Activity mContext;
-    WVJBHandler _messageHandler;
-    Map<String, WVJBHandler> _messageHandlers;
-    Map<String, WVJBResponseCallback> _responseCallbacks;
-    long _uniqueId;
+    private WebView mWebView;
+    private Activity mContext;
+    private WVJBHandler mMessageHandler;
+    private Map<String, WVJBHandler> mMessageHandlers;
+    private Map<String, WVJBResponseCallback> mResponseCallbacks;
+    long mUniqueId;
 
     public WebViewJavascriptBridge(Activity context, WebView webview, WVJBHandler handler) {
-        this.mContext = context;
-        this.mWebView = webview;
-        this._messageHandler = handler;
-        _messageHandlers = new HashMap<String, WVJBHandler>();
-        _responseCallbacks = new HashMap<String, WVJBResponseCallback>();
-        _uniqueId = 0;
+        mContext = context;
+        mWebView = webview;
+        mMessageHandler = handler;
+        mMessageHandlers = new HashMap<>();
+        mResponseCallbacks = new HashMap<>();
+        mUniqueId = 0;
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(this, "_WebViewJavascriptBridge");
-        mWebView.setWebViewClient(new MyWebViewClient());
-        mWebView.setWebChromeClient(new MyWebChromeClient());     //optional, for show console and alert
+        mWebView.setWebViewClient(new PeonyWebViewClient());
+        //optional, for show console and alert
+        mWebView.setWebChromeClient(new PeonyWebChromeClient());
     }
 
     private void loadWebViewJavascriptBridgeJs(WebView webView) {
         InputStream is = mContext.getResources().openRawResource(R.raw.webviewjavascriptbridge);
         String script = convertStreamToString(is);
         webView.loadUrl("javascript:" + script);
-
     }
 
     public static String convertStreamToString(InputStream is) {
@@ -60,7 +60,7 @@ public class WebViewJavascriptBridge implements Serializable {
         return s;
     }
 
-    private class MyWebViewClient extends WebViewClient {
+    private class PeonyWebViewClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView webView, String url) {
             Log.d(TAG, "onPageFinished");
@@ -68,7 +68,7 @@ public class WebViewJavascriptBridge implements Serializable {
         }
     }
 
-    private class MyWebChromeClient extends WebChromeClient {
+    private class PeonyWebChromeClient extends WebChromeClient {
         @Override
         public boolean onConsoleMessage(ConsoleMessage cm) {
             Log.d(TAG, cm.message() + " line:" + cm.lineNumber());
@@ -95,7 +95,7 @@ public class WebViewJavascriptBridge implements Serializable {
     }
 
     public void registerHandler(String handlerName, WVJBHandler handler) {
-        _messageHandlers.put(handlerName, handler);
+        mMessageHandlers.put(handlerName, handler);
     }
 
     private class CallbackJs implements WVJBResponseCallback {
@@ -111,7 +111,6 @@ public class WebViewJavascriptBridge implements Serializable {
         }
     }
 
-
     private void _callbackJs(String callbackIdJs, String data) {
         //TODO: CALL js to call back;
         Map<String, String> message = new HashMap<String, String>();
@@ -124,9 +123,9 @@ public class WebViewJavascriptBridge implements Serializable {
     public void _handleMessageFromJs(final String data, String responseId,
                                      String responseData, String callbackId, String handlerName) {
         if (null != responseId) {
-            WVJBResponseCallback responseCallback = _responseCallbacks.get(responseId);
+            WVJBResponseCallback responseCallback = mResponseCallbacks.get(responseId);
             responseCallback.callback(responseData);
-            _responseCallbacks.remove(responseId);
+            mResponseCallbacks.remove(responseId);
         } else {
             WVJBResponseCallback responseCallback = null;
             if (null != callbackId) {
@@ -134,13 +133,13 @@ public class WebViewJavascriptBridge implements Serializable {
             }
             final WVJBHandler handler;
             if (null != handlerName) {
-                handler = _messageHandlers.get(handlerName);
+                handler = mMessageHandlers.get(handlerName);
                 if (null == handler) {
                     Log.e(TAG, "WVJB Warning: No handler for " + handlerName);
                     return;
                 }
             } else {
-                handler = _messageHandler;
+                handler = mMessageHandler;
             }
             try {
                 final WVJBResponseCallback callback = responseCallback;
@@ -168,8 +167,8 @@ public class WebViewJavascriptBridge implements Serializable {
         Map<String, String> message = new HashMap<String, String>();
         message.put("data", data);
         if (null != responseCallback) {
-            String callbackId = "java_cb_" + (++_uniqueId);
-            _responseCallbacks.put(callbackId, responseCallback);
+            String callbackId = "java_cb_" + (++mUniqueId);
+            mResponseCallbacks.put(callbackId, responseCallback);
             message.put("callbackId", callbackId);
         }
         if (null != handlerName) {
@@ -221,5 +220,4 @@ public class WebViewJavascriptBridge implements Serializable {
         result = result.replace("\f", "\\f");
         return result;
     }
-
 }
