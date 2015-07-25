@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "Java";
 
-    private final static String TEST_URL = "http://apis.baidu.com/apistore/weatherservice/weather";
+    private final static String TEST_URL = "http://apis.baidu.com/apistore/weatherservice/weather?citypinyin=shanghai";
 
     private WebView mWebView;
     private WebViewJavascriptBridge bridge;
