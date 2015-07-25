@@ -19,6 +19,7 @@ import java.util.Scanner;
  */
 public class WebViewJavascriptBridge implements Serializable {
     private final static String TAG = WebViewJavascriptBridge.class.getSimpleName();
+    public final static String WVJB_LOAD_DATA = "wvjb_load_data";
 
     private WebView mWebView;
     private Activity mContext;

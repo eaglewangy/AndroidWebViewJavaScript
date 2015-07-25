@@ -53,7 +53,7 @@
 		callbackButton.innerHTML = 'Fire testObjcCallback';
 		callbackButton.onclick = function(e) {
 			e.preventDefault();
-			bridge.callHandler('testObjcCallback', {'foo': 'bar'}, function(response) {
+			bridge.callHandler('wvjb_load_data', {'foo': 'bar'}, function(response) {
 				log('JS got response', response);
 			});
 		};
