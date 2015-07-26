@@ -14,7 +14,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "Java";
@@ -22,14 +21,14 @@ public class MainActivity extends AppCompatActivity {
     private final static String TEST_URL = "http://apis.baidu.com/apistore/weatherservice/weather?citypinyin=shanghai";
 
     private WebView mWebView;
-    private WebViewJavascriptBridge bridge;
+    private WebViewJavascriptBridge mBridge;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mWebView = (WebView) this.findViewById(R.id.webView);
-        bridge = new WebViewJavascriptBridge(this, mWebView, new PeonyWVJBHandler());
+        mBridge = new WebViewJavascriptBridge(this, mWebView, new PeonyWVJBHandler());
         loadUserClient();
         registerHandler();
     }
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         public void handle(String data, WebViewJavascriptBridge.WVJBResponseCallback jsCallback) {
             Log.d(TAG, "Received message from javascript: " + data);
             if (null != jsCallback) {
-                jsCallback.callback("Java said:Right back atcha");
+                jsCallback.callback("Java said: " + data);
             }
             /*
             bridge.send("I expect a response!", new WebViewJavascriptBridge.WVJBResponseCallback() {
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void registerHandler() {
-        bridge.registerHandler(WebViewJavascriptBridge.WVJB_LOAD_DATA, new WebViewJavascriptBridge.WVJBHandler() {
+        mBridge.registerHandler(WebViewJavascriptBridge.WVJB_LOAD_DATA, new WebViewJavascriptBridge.WVJBHandler() {
             @Override
             public void handle(String data, WebViewJavascriptBridge.WVJBResponseCallback jsCallback) {
                 Log.d(TAG, WebViewJavascriptBridge.WVJB_LOAD_DATA + " got: " + data);
@@ -124,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             connection.connect();
             InputStream is = connection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            String strRead = null;
+            String strRead;
             StringBuffer buffer = new StringBuffer();
             while ((strRead = reader.readLine()) != null) {
                 buffer.append(strRead);
