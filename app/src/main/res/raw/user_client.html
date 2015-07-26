@@ -11,8 +11,17 @@
 </head>
 
 <script type='text/javascript'>
-    console.log('user_client.js called!');
-    document.addEventListener('WebViewJavascriptBridgeReady', function(event) {
+    function connectWebViewJavascriptBridge(callback) {
+		if (window.WebViewJavascriptBridge) {
+			callback(WebViewJavascriptBridge);
+		} else {
+			document.addEventListener('WebViewJavascriptBridgeReady', function() {
+				callback(WebViewJavascriptBridge);
+			}, false);
+		}
+	}
+
+    connectWebViewJavascriptBridge(function(bridge) {
         var uniqueId = 1;
 		function log(message, data) {
 			var log = document.getElementById('log');
@@ -23,8 +32,6 @@
 			else { log.appendChild(el); }
 		}
 
-
-        var bridge= event.bridge;
         bridge.init(function(message, responseCallback) {
              if (responseCallback) {
                 responseCallback('Right back atcha');
@@ -68,7 +75,7 @@
             console.log('got handler1 response:'+responseData);
         });
         */
-    }, false);
+    });
 </script>
 </head>
 <body>

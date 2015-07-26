@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         Future<String> callFuture = executorService.submit(new HttpRequestThread(url));
         try {
             final String response = callFuture.get();
-            System.out.println("Callable:" + response);
+            System.out.println("Java http response:" + response);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
